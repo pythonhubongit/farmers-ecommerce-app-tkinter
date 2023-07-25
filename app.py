@@ -60,6 +60,7 @@ def create_products_table():
         sql = """
         CREATE TABLE IF NOT EXISTS products (
             farmername VARCHAR(255) NOT NULL,
+            phone INT NOT NULL,
             id INT AUTO_INCREMENT PRIMARY KEY,
             title VARCHAR(255) NOT NULL,
             description VARCHAR(1000) NOT NULL,
@@ -226,15 +227,15 @@ def save_product():
     quantity = quantity_entry.get()
     expiry_date = expiry_entry.get()
     price = price_entry.get()
-    # farmer_name = username_entry.get()
+    phone = phonenumber_entry.get()
 
     try:
         connection = get_database_connection()
         cursor = connection.cursor()
 
         # Insert the product data into the database
-        sql = "INSERT INTO products (farmername, title, description, quantity, expiry_date, price ) VALUES (%s, %s, %s, %s, %s, %s)"
-        values = (username, title, description, quantity, expiry_date, price)
+        sql = "INSERT INTO products (farmername, phone, title, description, quantity, expiry_date, price ) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+        values = (username, phone, title, description, quantity, expiry_date, price)
         cursor.execute(sql, values)
 
         connection.commit()
@@ -254,6 +255,12 @@ def farmer_add_product_screen():
     label = tk.Label(root, text="Add Product")
     label.pack()
 
+    phonenumber = tk.Label(root, text="PhoneNumber")
+    phonenumber.pack()
+    global phonenumber_entry
+    phonenumber_entry = tk.Entry(root)
+    phonenumber_entry.pack()
+    
     title_label = tk.Label(root, text="Title")
     title_label.pack()
     global title_entry
@@ -313,15 +320,16 @@ def normal_user_screen():
         cursor = connection.cursor()
 
         # Fetch all products from the database
-        sql = "SELECT farmername, title, description, quantity, expiry_date, price FROM products"
+        sql = "SELECT farmername, phone, title, description, quantity, expiry_date, price FROM products"
         cursor.execute(sql)
         products = cursor.fetchall()
 
         # Create a Treeview widget to display products in a table-like format
-        tree = ttk.Treeview(root, columns=("FarmerName", "Title", "Description", "Quantity", "Expiry Date", "Price"), show="headings")
+        tree = ttk.Treeview(root, columns=("FarmerName", "Phone", "Title", "Description", "Quantity", "Expiry Date", "Price"), show="headings")
 
         # Add headings to the columns
         tree.heading("FarmerName", text="FarmerName")
+        tree.heading("Phone", text="Phone")
         tree.heading("Title", text="Title")
         tree.heading("Description", text="Description")
         tree.heading("Quantity", text="Quantity")
@@ -330,6 +338,7 @@ def normal_user_screen():
         
         # setting width
         tree.column("FarmerName", width=80)
+        tree.column("Phone", width=80)
         tree.column("Title", width=100)
         tree.column("Description", width=200)
         tree.column("Quantity", width=80)
@@ -362,15 +371,16 @@ def company_screen():
         cursor = connection.cursor()
 
         # Fetch all products from the database
-        sql = "SELECT farmername, title, description, quantity, expiry_date, price FROM products"
+        sql = "SELECT farmername, phone, title, description, quantity, expiry_date, price FROM products"
         cursor.execute(sql)
         products = cursor.fetchall()
 
         # Create a Treeview widget to display products in a table-like format
-        tree = ttk.Treeview(root, columns=("Farmername", "Title", "Description", "Quantity", "Expiry Date", "Price"), show="headings")
+        tree = ttk.Treeview(root, columns=("Farmername", "Phone", "Title", "Description", "Quantity", "Expiry Date", "Price"), show="headings")
 
         # Add headings to the columns
         tree.heading("Farmername", text="Farmername")
+        tree.heading("Phone", text="Phone")
         tree.heading("Title", text="Title")
         tree.heading("Description", text="Description")
         tree.heading("Quantity", text="Quantity")
@@ -379,6 +389,7 @@ def company_screen():
         
         # setting width
         tree.column("FarmerName", width=80)
+        tree.column("Phone", width=80)
         tree.column("Title", width=120)
         tree.column("Description", width=200)
         tree.column("Quantity", width=80)
