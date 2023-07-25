@@ -41,7 +41,7 @@ def create_users_table():
             id INT AUTO_INCREMENT PRIMARY KEY,
             username VARCHAR(255) NOT NULL,
             password VARCHAR(255) NOT NULL,
-            user_type VARCHAR(50) NOT NULL
+            user_type VARCHAR(80) NOT NULL
         )
         """
         cursor.execute(sql)
@@ -59,6 +59,7 @@ def create_products_table():
 
         sql = """
         CREATE TABLE IF NOT EXISTS products (
+            farmername VARCHAR(255) NOT NULL,
             id INT AUTO_INCREMENT PRIMARY KEY,
             title VARCHAR(255) NOT NULL,
             description VARCHAR(1000) NOT NULL,
@@ -67,6 +68,7 @@ def create_products_table():
             price DECIMAL(10, 2) NOT NULL
         )
         """
+        # sql = "DROP TABLE products"
         cursor.execute(sql)
 
         cursor.close()
@@ -78,6 +80,7 @@ def create_products_table():
 
 # Function to handle login button click
 def login():
+    global username, password, user_type
     username = username_entry.get()
     password = password_entry.get()
     user_type = user_type_var.get()
@@ -230,8 +233,8 @@ def save_product():
         cursor = connection.cursor()
 
         # Insert the product data into the database
-        sql = "INSERT INTO products (title, description, quantity, expiry_date, price ) VALUES (%s, %s, %s, %s, %s)"
-        values = (title, description, quantity, expiry_date, price)
+        sql = "INSERT INTO products (farmername, title, description, quantity, expiry_date, price ) VALUES (%s, %s, %s, %s, %s, %s)"
+        values = (username, title, description, quantity, expiry_date, price)
         cursor.execute(sql, values)
 
         connection.commit()
@@ -246,6 +249,7 @@ def save_product():
 
 
 def farmer_add_product_screen():
+    # print(username, password, user_type)
     clear_screen()
     label = tk.Label(root, text="Add Product")
     label.pack()
@@ -300,7 +304,7 @@ def farmer_home_screen():
 # Function to create and display the normal user screen
 def normal_user_screen():
     clear_screen()
-    root.geometry('1000x400')
+    root.geometry('1100x400')
     label = tk.Label(root, text="Normal User Screen - Products List")
     label.pack()
 
@@ -309,19 +313,28 @@ def normal_user_screen():
         cursor = connection.cursor()
 
         # Fetch all products from the database
-        sql = "SELECT title, description, quantity, expiry_date, price FROM products"
+        sql = "SELECT farmername, title, description, quantity, expiry_date, price FROM products"
         cursor.execute(sql)
         products = cursor.fetchall()
 
         # Create a Treeview widget to display products in a table-like format
-        tree = ttk.Treeview(root, columns=("Title", "Description", "Quantity", "Expiry Date", "Price"), show="headings")
+        tree = ttk.Treeview(root, columns=("FarmerName", "Title", "Description", "Quantity", "Expiry Date", "Price"), show="headings")
 
         # Add headings to the columns
+        tree.heading("FarmerName", text="FarmerName")
         tree.heading("Title", text="Title")
         tree.heading("Description", text="Description")
         tree.heading("Quantity", text="Quantity")
         tree.heading("Expiry Date", text="Expiry Date")
         tree.heading("Price", text="Price")
+        
+        # setting width
+        tree.column("FarmerName", width=80)
+        tree.column("Title", width=100)
+        tree.column("Description", width=200)
+        tree.column("Quantity", width=80)
+        tree.column("Expiry Date", width=80)
+        tree.column("Price", width=80)
 
         # Add products data to the treeview
         for product in products:
@@ -340,7 +353,7 @@ def normal_user_screen():
 # Function to create and display the company screen
 def company_screen():
     clear_screen()
-    root.geometry('1000x400')
+    root.geometry('1100x400')
     label = tk.Label(root, text="Company Screen - Products List")
     label.pack()
 
@@ -349,19 +362,28 @@ def company_screen():
         cursor = connection.cursor()
 
         # Fetch all products from the database
-        sql = "SELECT title, description, quantity, expiry_date, price FROM products"
+        sql = "SELECT farmername, title, description, quantity, expiry_date, price FROM products"
         cursor.execute(sql)
         products = cursor.fetchall()
 
         # Create a Treeview widget to display products in a table-like format
-        tree = ttk.Treeview(root, columns=("Title", "Description", "Quantity", "Expiry Date", "Price"), show="headings")
+        tree = ttk.Treeview(root, columns=("Farmername", "Title", "Description", "Quantity", "Expiry Date", "Price"), show="headings")
 
         # Add headings to the columns
+        tree.heading("Farmername", text="Farmername")
         tree.heading("Title", text="Title")
         tree.heading("Description", text="Description")
         tree.heading("Quantity", text="Quantity")
         tree.heading("Expiry Date", text="Expiry Date")
         tree.heading("Price", text="Price")
+        
+        # setting width
+        tree.column("FarmerName", width=80)
+        tree.column("Title", width=120)
+        tree.column("Description", width=200)
+        tree.column("Quantity", width=80)
+        tree.column("Expiry Date", width=80)
+        tree.column("Price", width=80)
 
         # Add products data to the treeview
         for product in products:
